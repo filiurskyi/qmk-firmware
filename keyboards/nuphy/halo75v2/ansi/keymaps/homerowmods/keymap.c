@@ -4,8 +4,6 @@
 #include "ansi.h"
 #include "keycodes.h"
 #include QMK_KEYBOARD_H
-#include "rgblight.h"
-
 
 // Left-hand home row mods
 #define GUI_A LGUI_T(KC_A)
@@ -20,13 +18,22 @@
 
 bool is_toggled = false;
 
-void TOG_H_R(bool state) {
-	if (state) {
-		layer_move(3);
-	} else {
-		layer_move(5);
-	}
-	is_toggled = state;
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case TOG_H_R:
+            if (record->event.pressed) {
+                is_toggled = !is_toggled;
+                if (is_toggled) {
+                    layer_move(3);
+                    wait_ms(2000);
+                } else {
+                    layer_move(5);
+                }
+            }
+            return false;
+        default:
+            return true;
+    }
 }
 
 // clang-format off
@@ -67,7 +74,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [4] = LAYOUT(
 	_______, 	_______,  	_______,  	_______, 	_______,  	_______,  	_______,  	_______,  	_______,  	_______, 	_______, 	_______, 	_______, 	_______,	_______,    _______,
 	_______, 	_______,   	_______,   	_______,  	_______,   	_______,   	_______,   	_______,   	_______,   	_______,  	_______,   	_______,	_______, 	_______,	            _______,
-	_______, 	TOG_H_R(is_toggled),  	_______,  	_______,  	_______,   	_______,   	_______,   	_______,   	_______,   	_______,  	_______,   	_______,	_______, 	_______,	            _______,
+	_______, 	TOG_H_R,  	_______,  	_______,  	_______,   	_______,   	_______,   	_______,   	_______,   	_______,  	_______,   	_______,	_______, 	_______,	            _______,
 	_______,	_______,   	_______,   	_______,  	_______,   	_______,   	_______,	_______,   	_______,   	_______,  	_______,	_______, 	_______,                            _______,
 	_______,				_______,   	_______,   	_______,  	_______,   	_______,   	_______,	_______, 	SIDE_SPD,	SIDE_SPI,	SIDE_MOD_B,	_______,	            SIDE_VAI,   _______,
 	_______,	_______,	_______,										_______, 							_______,	MO(4),   	        	            SIDE_MOD_A, SIDE_VAD,	SIDE_HUI),
