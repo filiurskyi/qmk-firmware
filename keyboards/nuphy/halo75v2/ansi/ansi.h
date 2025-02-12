@@ -67,6 +67,8 @@ enum custom_keycodes {
     SOCDOFF,
     SOCDTOG,
     FW_VERSION,
+
+    TOG_H_R
 };
 
 #define MAC_PRT G(S(KC_3))
