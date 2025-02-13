@@ -24,8 +24,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 is_toggled = !is_toggled;
                 if (is_toggled) {
-                    layer_move(3);
-                    wait_ms(2000);
+                    layer_move(2);
                 } else {
                     layer_move(5);
                 }
