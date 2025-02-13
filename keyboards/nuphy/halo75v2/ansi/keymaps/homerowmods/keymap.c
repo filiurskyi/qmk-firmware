@@ -16,25 +16,28 @@
 #define ALT_L LALT_T(KC_L)
 #define GUI_SCLN RGUI_T(KC_SCLN)
 
-bool is_toggled = false;
+#define TAPPING_TERM_PER_KEY
 
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case TOG_H_R:
-            if (record->event.pressed) {
-                is_toggled = !is_toggled;
-                if (is_toggled) {
-                    layer_move(2);
-                } else {
-                    layer_move(5);
-                }
-            }
-            return false;
+        // Left-hand
+        case GUI_A:   return 225;  // Pinky (slower reaction)
+        case ALT_S:   return 200;  // Ring
+        case CTL_D:   return 175;  // Middle
+        case SFT_F:   return 150;  // Index (fastest)
+        // Right-hand
+        case SFT_J:   return 150;  // Index (fastest)
+        case CTL_K:   return 175;  // Middle
+        case ALT_L:   return 200;  // Ring
+        case GUI_SCLN:return 225;  // Pinky (slower reaction)
+
+		// Custom timeout for LT(6, KC_ESC) (Caps Lock)
+        case LT(6, KC_ESC): return 300;
+
         default:
-            return true;
+            return TAPPING_TERM; // Default tapping term for other keys
     }
 }
-
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // layer Mac
@@ -65,7 +68,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [3] = LAYOUT(
 	_______, 	KC_BRID,  	KC_BRIU,  	SOCDON, 	    SOCDOFF,  	SOCDTOG,  	_______,  	KC_MPRV,  	KC_MPLY,  	KC_MNXT, 	KC_MUTE, 	KC_VOLD, 	KC_VOLU, 	KC_PSCR,	TOG_POWER_ON_ANIMATION,	_______,
 	_______, 	LNK_BLE1,  	LNK_BLE2,  	LNK_BLE3,  	LNK_RF,   	_______,   	_______,   	_______,   	_______,   	_______,  	_______,   	_______,	_______, 	_______,	            _______,
-	_______, 	TOG_H_R,   	_______,   	_______,   	_______,   	_______,   	DEBOUNCE_PRESS_DEC,   	DEBOUNCE_PRESS_SHOW,   	DEBOUNCE_PRESS_INC,   	TOG_DEEP_SLEEP,  	TOG_USB_SLP,   	DEV_RESET,	SLEEP_MODE, BAT_SHOW,	            _______,
+	_______, 	TO(2),   	TO(5),   	_______,   	_______,   	_______,   	DEBOUNCE_PRESS_DEC,   	DEBOUNCE_PRESS_SHOW,   	DEBOUNCE_PRESS_INC,   	TOG_DEEP_SLEEP,  	TOG_USB_SLP,   	DEV_RESET,	SLEEP_MODE, BAT_SHOW,	            _______,
 	TOG_CAPS_IND,	SLEEP_TIMEOUT_DEC,   	SLEEP_TIMEOUT_SHOW,   	SLEEP_TIMEOUT_INC,  	_______,   	_______,   	DEBOUNCE_RELEASE_DEC,	DEBOUNCE_RELEASE_SHOW,   	DEBOUNCE_RELEASE_INC,   	_______,  	_______,	_______, 	_______,                            _______,
 	_______,				_______,   	_______,   	RGB_TEST,  	_______,    _______,   	_______,	MO(4), 		RGB_SPD,	RGB_SPI,	_______,	_______,	            RGB_VAI,    _______,
 	_______,	_______,	_______,										_______, 							            _______,	MO(3),					RGB_MOD,    RGB_VAD,	RGB_HUI),
@@ -82,9 +85,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	KC_ESC, 	KC_F1,  	KC_F2,  	KC_F3, 		KC_F4,  	KC_F5,  	KC_F6,  	KC_F7,  	KC_F8,  	KC_F9, 		KC_F10, 	KC_F11, 	KC_F12, 	WIN_PRTA,   KC_INS,     KC_DEL,
 	KC_GRV, 	KC_1,   	KC_2,   	KC_3,  		KC_4,   	KC_5,   	KC_6,   	KC_7,   	KC_8,   	KC_9,  		KC_0,   	KC_MINS,	KC_EQL, 	KC_BSPC,                KC_HOME,
 	KC_TAB, 	KC_Q,   	KC_W,   	KC_E,  		KC_R,   	KC_T,   	KC_Y,   	KC_U,   	KC_I,   	KC_O,  		KC_P,   	KC_LBRC,	KC_RBRC,	KC_BSLS,                KC_END,
-	KC_CAPS,	GUI_A,   	ALT_S,   	CTL_D,  	SFT_F,   	KC_G,   	KC_H,   	SFT_J,   	CTL_K,   	ALT_L,  	GUI_SCLN,	KC_QUOT, 	KC_ENT, 	                        KC_PGUP,
+	LT(6, KC_ESC),	GUI_A,   	ALT_S,   	CTL_D,  	SFT_F,   	KC_G,   	KC_H,   	SFT_J,   	CTL_K,   	ALT_L,  	GUI_SCLN,	KC_QUOT, 	KC_ENT, 	                        KC_PGUP,
 	KC_LSFT,				KC_Z,   	KC_X,   	KC_C,  		KC_V,   	KC_B,   	KC_N,   	KC_M,   	KC_COMM,	KC_DOT,		KC_SLSH,	KC_RSFT,                KC_UP,	    KC_PGDN,
 	KC_LCTL,	KC_LWIN,	KC_LALT,										KC_SPC, 							            KC_RALT,	MO(3),	                KC_LEFT,   	KC_DOWN,	KC_RIGHT),
+// layer 6 VIM motions
+[6] = LAYOUT(
+	_______, 	_______,  	_______,  	_______, 	_______,  	_______,  	_______,  	_______,  	_______,  	_______, 	_______, 	_______, 	_______, 	_______,	_______,    _______,
+	_______, 	_______,   	_______,   	_______,  	_______,   	_______,   	_______,   	_______,   	_______,   	_______,  	_______,   	_______,	_______, 	_______,	            _______,
+	_______, 	_______,  	_______,  	_______,  	_______,   	_______,   	_______,   	_______,   	_______,   	_______,  	_______,   	_______,	_______, 	_______,	            _______,
+	TO(5),  	_______,   	_______,   	_______,  	_______,   	_______,   	KC_LEFT,	KC_DOWN,   	KC_UP,   	KC_RIGHT,  	_______,	_______, 	_______,                            _______,
+	_______,				_______,   	_______,   	_______,  	_______,   	_______,   	_______,	_______, 	_______,	_______,	_______,	_______,	            _______,    _______,
+	_______,	_______,	_______,										_______, 							_______,	_______,   	        	               _______, _______,	_______),
 };
 // clang-format on
 
