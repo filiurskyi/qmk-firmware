@@ -18,20 +18,22 @@
 
 #define TAPPING_TERM_PER_KEY
 
+#define BASE_TAPPING_TERM 200
+
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         // Left-hand
-        case GUI_A:   return 225;  // Pinky (slower reaction)
-        case ALT_S:   return 200;  // Ring
-        case CTL_D:   return 175;  // Middle
-        case SFT_F:   return 150;  // Index (fastest)
+        case GUI_A:   return BASE_TAPPING_TERM + 25;   // Pinky (slower reaction)
+        case ALT_S:   return BASE_TAPPING_TERM + 0;    // Ring (baseline)
+        case CTL_D:   return BASE_TAPPING_TERM - 25;   // Middle
+        case SFT_F:   return BASE_TAPPING_TERM - 50;   // Index (fastest)
         // Right-hand
-        case SFT_J:   return 150;  // Index (fastest)
-        case CTL_K:   return 175;  // Middle
-        case ALT_L:   return 200;  // Ring
-        case GUI_SCLN:return 225;  // Pinky (slower reaction)
+        case SFT_J:   return BASE_TAPPING_TERM - 50;   // Index (fastest)
+        case CTL_K:   return BASE_TAPPING_TERM - 25;   // Middle
+        case ALT_L:   return BASE_TAPPING_TERM + 0;    // Ring (baseline)
+        case GUI_SCLN:return BASE_TAPPING_TERM + 25;   // Pinky (slower reaction)
 
-		// Custom timeout for LT(6, KC_ESC) (Caps Lock)
+        // Custom timeout for LT(6, KC_ESC) (Caps Lock)
         case LT(4, KC_SPC): return 300;
 
         default:
